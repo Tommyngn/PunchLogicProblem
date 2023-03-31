@@ -25,26 +25,32 @@ def getEEPunchData(punchData, jobData):
             workTime = round(float(abs(startTime - endTime)), 4)
 
             if (currentTotalTime + workTime) <= 40:
-                regular += workTime
+                regular = round(regular + workTime, 4)
                 wagetotal += (todaysJobRates['rate'] * workTime)
                 benefitstotal += (todaysJobRates['benefitsRate'] * workTime)
 
             elif 40 < (currentTotalTime + workTime) <= 48:
                 leftoverRegularTime = float(abs(40 - regular))
                 regular += leftoverRegularTime
+                wagetotal += (todaysJobRates['rate'] * leftoverRegularTime)
 
                 leftoverOverTime = float(abs(workTime - leftoverRegularTime))
                 overtime += leftoverOverTime
-                wagetotal += (todaysJobRates['rate'] * workTime * 1.5)
+                wagetotal += (todaysJobRates['rate'] * leftoverOverTime * 1.5)
                 benefitstotal += (todaysJobRates['benefitsRate'] * workTime)
 
             elif (currentTotalTime + workTime) > 48:
+                leftoverRegularTime = float(abs(40 - regular))
+                regular += leftoverRegularTime
+                wagetotal += (todaysJobRates['rate'] * leftoverRegularTime)
+
                 leftoverOverTime = float(abs(8 - overtime))
                 overtime += leftoverOverTime
+                wagetotal += (todaysJobRates['rate'] * leftoverOverTime * 1.5)
 
-                leftoverDoubleTime = float(abs(workTime - leftoverOverTime))
+                leftoverDoubleTime = float(abs(workTime - leftoverOverTime - leftoverRegularTime))
                 doubletime += leftoverDoubleTime
-                wagetotal += (todaysJobRates['rate'] * workTime * 2)
+                wagetotal += (todaysJobRates['rate'] * leftoverDoubleTime * 2)
                 benefitstotal += (todaysJobRates['benefitsRate'] * workTime)
 
             currentTotalTime += workTime
@@ -61,8 +67,8 @@ def getEEPunchData(punchData, jobData):
 
 
 
-d = buildJobData(metaData)
-result = getEEPunchData(metaData, d)
+d = buildJobData(a)
+result = getEEPunchData(a, d)
 
 for i, j in result.items():
     print(j)
